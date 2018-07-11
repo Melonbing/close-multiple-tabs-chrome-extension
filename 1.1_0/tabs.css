@@ -6,12 +6,12 @@
 
 .hover .hover_text {
     visibility: hidden;
-    width: 160px;
+    width: 150px;
     background-color: wheat;
     color: black;
     text-align: left;
     border-radius: 6px;
-    padding: 5px 0;
+    padding: 5px 5px;
 
     /* Position the tooltip */
     position: absolute;

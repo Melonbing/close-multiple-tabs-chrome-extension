@@ -79,7 +79,6 @@ function eventDispatcher(e) {
 	if ((e.keyCode || e.which) == 88) { // x
 		closeSelected()
 	} else if ((e.keyCode || e.which) == 68) {// d
-		console.log(e.keyCode)
 		removeDuplicates()
 	} else {
 		console.log(e.keyCode)
@@ -88,29 +87,18 @@ function eventDispatcher(e) {
 
 var MAX_SELECT_SIZE = 20
 
-function toggle_options() {
-        alert('hello')
-        var curVisibility = $('#more_options').style.visibility
-        if (curVisibility == 'hidden') {
-          $('#more_options').style.visibility = 'visible'
-          $('#more_options').html('Hide')
-        } else if (curVisibility == 'visible') {
-          $('#more_options').style.visibility = 'hidden'
-          $('#more_options').html('Show more options')
-        }
-      }
-
 function displayTabs(tabs) {
     tabs.sort(domainComparator)
     var optionsHtml = ''
 
-    for (var i = 0; i < tabs.length; i++) {
-    	var tabDescription = '' + getDomainName(tabs[i].url) + ' *** ' + tabs[i].title
+    var tabDescription = getDomainName(tabs[0].url) + ' *** ' + tabs[0].title
+    $('#tabs').append('<option value=\"' + tabs[0].id + '\" selected>' + tabDescription + '</option>')
+    for (var i = 1; i < tabs.length; i++) {
+    	var tabDescription = getDomainName(tabs[i].url) + ' *** ' + tabs[i].title
 		$('#tabs').append('<option value=\"' + tabs[i].id + '\">' + tabDescription + '</option>')
     }
     $('#tabs').attr('size', Math.min(tabs.length, MAX_SELECT_SIZE))
-    var tabsElem = document.getElementById("tabs");
-    tabsElem.onkeyup = eventDispatcher;
+    document.onkeyup = eventDispatcher;
 };
 
 document.addEventListener("DOMContentLoaded", renderTabs);
