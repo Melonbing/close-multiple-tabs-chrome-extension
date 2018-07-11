@@ -56,7 +56,8 @@ function displayTabs(tabs) {
     var optionsHtml = ''
 
     for (var i = 0; i < tabs.length; i++) {
-		$('#tabs').append('<option value=\"' + tabs[i].id + '\">' + tabs[i].title + '</option>\n')
+    	var tabDescription = '' + getDomainName(tabs[i].url) + ' *** ' + tabs[i].title
+		$('#tabs').append('<option value=\"' + tabs[i].id + '\">' + tabDescription + '</option>')
     }
     $('#tabs').attr('size', Math.min(tabs.length, MAX_SELECT_SIZE))
     var tabsElem = document.getElementById("tabs");
