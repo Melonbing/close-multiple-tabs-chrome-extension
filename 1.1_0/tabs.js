@@ -2,9 +2,7 @@ function renderTabs() {
     chrome.tabs.query({currentWindow: true}, displayTabs);
 };
 
-function closeSelected(e) {
-    if ((e.keyCode || e.which) == 88) // x
-    {
+function closeSelected() {
 	var toCloseIds = [];
 	var toCloseElems = [];
 	var options = document.getElementsByTagName("option");
@@ -22,8 +20,71 @@ function closeSelected(e) {
 	{
 	    toCloseElems[i].remove();
 	}
-    }
 };
+
+function stringComparator(s1, s2) {
+	if (s1 < s2)
+		return -1
+	else if (s1 == s2)
+		return 0
+	return 1
+}
+
+function getDomainName(url) {
+	hostname = (new URL(url)).hostname;
+	if (hostname.startsWith('www.')) {
+		hostname = hostname.slice('www.'.length)
+	}
+	return hostname
+}
+
+domainComparator = function(tab1, tab2) {
+	var dn1 = getDomainName(tab1.url)
+	var dn2 = getDomainName(tab2.url)
+	return stringComparator(dn1, dn2)
+}
+
+// same url or same domain plus title
+function removeDuplicates() {
+	chrome.tabs.query({currentWindow: true}, function(tabs) { 
+		console.log('removing duplicates')
+		tabs.sort(domainComparator)
+		var toCloseIds = [];
+		var toCloseElems = [];
+		var options = document.getElementsByTagName("option");
+
+	    prevUrl = null
+	    prevDomain = null
+	    prevTitle = null
+	    for (var i = 0; i < tabs.length; i++) {
+	    	var curDomain = getDomainName(tabs[i].url)
+	    	if (tabs[i].url == prevUrl || (curDomain == prevDomain && tabs[i].title == prevTitle)) {
+	    		toCloseIds.push(tabs[i].id)
+	    		toCloseElems.push(options[i])
+	    	} else {
+	    		prevUrl = tabs[i].url
+	    		prevDomain = curDomain
+	    		prevTitle = tabs[i].title
+	    	}
+	    }
+	    chrome.tabs.remove(toCloseIds);
+		for (i = 0; i < toCloseElems.length; i++)
+		{
+		    toCloseElems[i].remove();
+		}
+	} );
+}
+
+function eventDispatcher(e) {
+	if ((e.keyCode || e.which) == 88) { // x
+		closeSelected()
+	} else if ((e.keyCode || e.which) == 68) {// d
+		console.log(e.keyCode)
+		removeDuplicates()
+	} else {
+		console.log(e.keyCode)
+	}
+}
 
 var MAX_SELECT_SIZE = 20
 
@@ -40,29 +101,6 @@ function toggle_options() {
       }
 
 function displayTabs(tabs) {
-
-    function stringComparator(s1, s2) {
-    	if (s1 < s2)
-    		return -1
-    	else if (s1 == s2)
-    		return 0
-    	return 1
-    }
-
-	function getDomainName(url) {
-		hostname = (new URL(url)).hostname;
-		if (hostname.startsWith('www.')) {
-			hostname = hostname.slice('www.'.length)
-		}
-		return hostname
-	}
-
-    domainComparator = function(tab1, tab2) {
-    	var dn1 = getDomainName(tab1.url)
-    	var dn2 = getDomainName(tab2.url)
-    	return stringComparator(dn1, dn2)
-    }
-
     tabs.sort(domainComparator)
     var optionsHtml = ''
 
@@ -72,7 +110,7 @@ function displayTabs(tabs) {
     }
     $('#tabs').attr('size', Math.min(tabs.length, MAX_SELECT_SIZE))
     var tabsElem = document.getElementById("tabs");
-    tabsElem.onkeyup = closeSelected;
+    tabsElem.onkeyup = eventDispatcher;
 };
 
 document.addEventListener("DOMContentLoaded", renderTabs);
