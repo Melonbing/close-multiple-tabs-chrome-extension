@@ -29,6 +29,31 @@ function closeSelected(e) {
 function displayTabs(tabs) {
     var instructions = 'Select tabs and press <i>x</i> to close them.'
     var selectHTML = '<select id=\"tabs\" size=' + tabs.length + ' multiple>';
+
+    function stringComparator(s1, s2) {
+    	if (s1 < s2)
+    		return -1
+    	else if (s1 == s2)
+    		return 0
+    	return 1
+    }
+
+	function getDomainName(url) {
+		hostname = (new URL(url)).hostname;
+		if (hostname.startsWith('www.')) {
+			hostname = hostname.slice('www.'.length)
+		}
+		return hostname
+	}
+
+    domainComparator = function(tab1, tab2) {
+    	var dn1 = getDomainName(tab1.url)
+    	var dn2 = getDomainName(tab2.url)
+    	return stringComparator(dn1, dn2)
+    }
+
+    tabs.sort(domainComparator)
+
     for (var i = 0; i < tabs.length; i++) {
 	selectHTML += '<option value=\"' + tabs[i].id + '\">' + tabs[i].title + '</option>';
     }
