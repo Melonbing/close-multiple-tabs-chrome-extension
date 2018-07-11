@@ -10,9 +10,18 @@
      -->
     <script src="jquery-3.3.1.min.js"></script>
     <script src="tabs.js"></script>
+    <script src="options.js"></script>
   </head>
   <body>
-  <h3>Select tabs and press <i>x</i> to close them.</h3>
+  <div>
+    <h3>Select tabs and press <i>x</i> to close them.</h3>
+    <button id='toggle_options' style='font:10px'>More options</button>
+      <div id='more_options' style='visibility:hidden'>
+        <i>d</i> to remove duplicate tabs
+        <br>
+        <i>r</i> to reverse select
+      </div>
+  </div>
   <select id="tabs" multiple style="font-size: 14px">
   </select>
   </body>

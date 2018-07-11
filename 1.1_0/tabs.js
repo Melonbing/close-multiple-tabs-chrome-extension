@@ -27,8 +27,19 @@ function closeSelected(e) {
 
 var MAX_SELECT_SIZE = 20
 
+function toggle_options() {
+        alert('hello')
+        var curVisibility = $('#more_options').style.visibility
+        if (curVisibility == 'hidden') {
+          $('#more_options').style.visibility = 'visible'
+          $('#more_options').html('Hide')
+        } else if (curVisibility == 'visible') {
+          $('#more_options').style.visibility = 'hidden'
+          $('#more_options').html('Show more options')
+        }
+      }
+
 function displayTabs(tabs) {
-    var selectHTML = '<select id=\"tabs\" size=' + tabs.length + ' multiple style="font-size: 14px">';
 
     function stringComparator(s1, s2) {
     	if (s1 < s2)
