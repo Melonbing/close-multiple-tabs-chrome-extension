@@ -25,7 +25,6 @@ function closeSelected(e) {
     }
 };
 
-
 function displayTabs(tabs) {
     var selectHTML = '<select id=\"tabs\" size=' + tabs.length + ' multiple style="font-size: 14px">';
 
