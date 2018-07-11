@@ -27,8 +27,7 @@ function closeSelected(e) {
 
 
 function displayTabs(tabs) {
-    var instructions = 'Select tabs and press <i>x</i> to close them.'
-    var selectHTML = '<select id=\"tabs\" size=' + tabs.length + ' multiple>';
+    var selectHTML = '<select id=\"tabs\" size=' + tabs.length + ' multiple style="font-size: 14px">';
 
     function stringComparator(s1, s2) {
     	if (s1 < s2)
@@ -58,7 +57,7 @@ function displayTabs(tabs) {
 	selectHTML += '<option value=\"' + tabs[i].id + '\">' + tabs[i].title + '</option>';
     }
     selectHTML += '</select>';
-    document.body.innerHTML = instructions + selectHTML;
+    document.body.innerHTML = document.body.innerHTML + selectHTML;
     var tabsElem = document.getElementById("tabs");
     tabsElem.onkeyup = closeSelected;
 };
