@@ -25,6 +25,8 @@ function closeSelected(e) {
     }
 };
 
+var MAX_SELECT_SIZE = 20
+
 function displayTabs(tabs) {
     var selectHTML = '<select id=\"tabs\" size=' + tabs.length + ' multiple style="font-size: 14px">';
 
@@ -51,12 +53,12 @@ function displayTabs(tabs) {
     }
 
     tabs.sort(domainComparator)
+    var optionsHtml = ''
 
     for (var i = 0; i < tabs.length; i++) {
-	selectHTML += '<option value=\"' + tabs[i].id + '\">' + tabs[i].title + '</option>';
+		$('#tabs').append('<option value=\"' + tabs[i].id + '\">' + tabs[i].title + '</option>\n')
     }
-    selectHTML += '</select>';
-    document.body.innerHTML = document.body.innerHTML + selectHTML;
+    $('#tabs').attr('size', Math.min(tabs.length, MAX_SELECT_SIZE))
     var tabsElem = document.getElementById("tabs");
     tabsElem.onkeyup = closeSelected;
 };
