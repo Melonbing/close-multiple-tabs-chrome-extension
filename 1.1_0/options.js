@@ -1,5 +1,3 @@
-var optionsHtml = '<div id="more_options"><i>d</i> to remove duplicate tabs<br><i>r</i> to reverse select</div>'
-
 function toggleOptions() {
 	var curVisibility = $('#more_options').css('visibility');
 	if (curVisibility == 'hidden') {

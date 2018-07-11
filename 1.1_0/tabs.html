@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Tab manager</title>
+    <link rel="stylesheet" href="tabs.css">
     <!--
       - JavaScript and HTML must be in separate files: see our Content Security
       - Policy documentation[1] for details and explanation.
@@ -14,7 +15,13 @@
   </head>
   <body>
   <div>
-    <h3>Select tabs and press <i>x</i> to close them. <button id='toggle_options' style='font:10px;float:right'>Show more options</button></h3>
+    <h3>Select tabs and press <i>x</i> to close them.
+      <div class='hover' id='toggle_options'>More options
+        <span class="hover_text">
+          <div id="more_options"><i>d</i> to remove duplicate tabs<br><i>r</i> to reverse select</div>
+        </span>
+      </div>
+    </h3>
   </div>
   <select id="tabs" multiple style="font-size: 14px">
   </select>
