@@ -123,8 +123,8 @@ function eventDispatcher(e) {
 var MAX_SELECT_SIZE = 20
 
 function displayTabs(tabs) {
+	//alert('hello')
     tabs.sort(domainComparator)
-    var optionsHtml = ''
 
     var tabDescription = getDomainName(tabs[0].url) + ' *** ' + tabs[0].title
     $('#tabs').append('<option value=\"' + tabs[0].id + '\" selected>' + tabDescription + '</option>')
@@ -136,4 +136,4 @@ function displayTabs(tabs) {
     document.onkeyup = eventDispatcher;
 };
 
-document.addEventListener("DOMContentLoaded", renderTabs);
+window.onload = renderTabs

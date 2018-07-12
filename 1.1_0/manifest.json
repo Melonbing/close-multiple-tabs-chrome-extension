@@ -3,11 +3,11 @@
       "default_icon": "icon.png",
       "default_popup": "tabs.html"
    },
-   "description": "Select multiple tabs and close them together.",
+   "description": "Select multiple tabs and close them together. Remove duplicate tabs. Goto specific tab.",
    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqiQV7dfAetqebwVI21Zw8iIRLKIFSLJAJTtoeR5asuFJOWOvbyzppFUHEm6eMy1QjlEHuco5/1bryHj6MaehXAsGhnak64eU8j8ihpXD1x1hgwQvBCXBJPbGu5PH3VhsahsUniUVukpyw6ZWBL1mUmq5fo19sajmv2JSqgfLGsAdcC8ZWjCuNCvSihUjzgzkxupyeuNUTVIXYSurf9ePUfSfRlidKy8lWEt4HZiSrsFbhSdSM3uNnluofBkToRez5otEcBJPd68CJKrPr+rZMgZwFWOlnqVTsFhJXJWPIWax81jkTJGyDZhmiccTAu9DxwggW4DH6ysl1JpnzbOZtwIDAQAB",
    "manifest_version": 2,
    "name": "Close multiple tabs",
    "permissions": [ "tabs" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "1.1"
+   "version": "1.2"
 }
