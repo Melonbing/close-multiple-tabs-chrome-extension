@@ -7,18 +7,32 @@ function closeSelected() {
 	var toCloseElems = [];
 	var options = document.getElementsByTagName("option");
 	
-	for (var i = 0; i < tabs.length; i++)
+	var highestIndex = -1;
+	var len = tabs.length;
+	for (var i = 0; i < len; i++)
 	{
 	    if (options[i].selected)
 	    {
-		toCloseIds.push(parseInt(options[i].value));
-		toCloseElems.push(options[i]);
+			toCloseIds.push(parseInt(options[i].value));
+			toCloseElems.push(options[i]);
+			highestIndex = i;
 	    }
 	}
 	chrome.tabs.remove(toCloseIds);
 	for (i = 0; i < toCloseElems.length; i++)
 	{
 	    toCloseElems[i].remove();
+	}
+
+	if (highestIndex >= 0) {
+		var nextFocusIndex = -1;
+		if (highestIndex == len-1) {
+			nextFocusIndex = len-1-toCloseIds.length
+		} else {
+			nextFocusIndex = highestIndex+1-toCloseIds.length
+		}
+		var options = document.getElementsByTagName("option");
+		options[nextFocusIndex].selected = true;
 	}
 };
 
