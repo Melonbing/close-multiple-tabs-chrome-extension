@@ -36,6 +36,27 @@ function closeSelected() {
 	}
 };
 
+function gotoSelected() {
+	chrome.tabs.query({currentWindow: true}, function(tabs) { 
+		tabs.sort(domainComparator)
+		var tabId = null
+		var options = document.getElementsByTagName("option");
+		for (var i = 0; i < tabs.length; i++)
+		{
+		    if (options[i].selected)
+		    {
+				tabId = tabs[i].id
+				break
+		    }
+		}
+		if (tabId) {
+	  		chrome.tabs.get(tabId, function(tab) {
+  				chrome.tabs.highlight({'tabs': tab.index}, function() {});
+  			})
+		}
+	})
+}
+
 function stringComparator(s1, s2) {
 	if (s1 < s2)
 		return -1
@@ -60,8 +81,8 @@ domainComparator = function(tab1, tab2) {
 
 // same url or same domain plus title
 function removeDuplicates() {
+	console.log("enter function removeDuplicates")
 	chrome.tabs.query({currentWindow: true}, function(tabs) { 
-		console.log('removing duplicates')
 		tabs.sort(domainComparator)
 		var toCloseIds = [];
 		var toCloseElems = [];
@@ -90,12 +111,12 @@ function removeDuplicates() {
 }
 
 function eventDispatcher(e) {
-	if ((e.keyCode || e.which) == 88) { // x
+	if ((e.keyCode || e.which) == 8) { // delete
 		closeSelected()
 	} else if ((e.keyCode || e.which) == 68) {// d
 		removeDuplicates()
-	} else {
-		console.log(e.keyCode)
+	} else if ((e.keyCode || e.which) == 13) { // enter
+		gotoSelected()
 	}
 }
 
