@@ -39,32 +39,37 @@ function closeSelected() {
 function organizeTabs() {
 	chrome.tabs.query({currentWindow: true}, function(tabs) {
 		function moveTabs(tabsToMove, targetIndex) {
+			// console.log(tabsToMove + " left to move")
 			if (tabsToMove.length == 0) {
 				groupTabsAt(targetIndex)
 			} else {
 				chrome.tabs.move(tabsToMove.pop(), {'index': targetIndex}, function(movedTab) {
+					// console.log("moved tab " + movedTab.url + " " + movedTab.id + " to index " + targetIndex)
 					moveTabs(tabsToMove, targetIndex+1)
 				})
 			}
 		}
 
 		function groupTabsAt(index) {
-			if (index >= tabs.length) return;
-			domainName = getDomainName(tabs[index].url)
-			while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
-				index++
-			}
-			tabsToMove = []
-			for (j = index+1; j < tabs.length; j++) {
-				curDomain = getDomainName(tabs[j].url)
-				if (curDomain == domainName) {
-					tabsToMove.push(tabs[j].id);
+			chrome.tabs.query({currentWindow: true}, function(tabs) {
+				// console.log('groupTabsAt: ' + index)
+				if (index >= tabs.length) return;
+				domainName = getDomainName(tabs[index].url)
+				while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
+					index++
 				}
-			}
-			if (tabsToMove.length == 0)
-				groupTabsAt(index+1)
-			else
-				moveTabs(tabsToMove.reverse(), index+1)
+				tabsToMove = []
+				for (j = index+1; j < tabs.length; j++) {
+					curDomain = getDomainName(tabs[j].url)
+					if (curDomain == domainName) {
+						tabsToMove.push(tabs[j].id);
+					}
+				}
+				if (tabsToMove.length == 0)
+					groupTabsAt(index+1)
+				else
+					moveTabs(tabsToMove.reverse(), index+1)
+			})
 		}
 
 		groupTabsAt(0)
