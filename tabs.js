@@ -24,6 +24,7 @@ function closeSelected() {
 	    toCloseElems[i].remove();
 	}
 
+	// select the next tab after the closed ones
 	if (highestIndex >= 0) {
 		var nextFocusIndex = -1;
 		if (highestIndex == len-1) {
@@ -31,10 +32,44 @@ function closeSelected() {
 		} else {
 			nextFocusIndex = highestIndex+1-toCloseIds.length
 		}
-		var options = document.getElementsByTagName("option");
 		options[nextFocusIndex].selected = true;
 	}
 };
+
+function organizeTabs() {
+	chrome.tabs.query({currentWindow: true}, function(tabs) {
+		function moveTabs(tabsToMove, targetIndex) {
+			if (tabsToMove.length == 0) {
+				groupTabsAt(targetIndex)
+			} else {
+				chrome.tabs.move(tabsToMove.pop(), {'index': targetIndex}, function(movedTab) {
+					moveTabs(tabsToMove, targetIndex+1)
+				})
+			}
+		}
+
+		function groupTabsAt(index) {
+			if (index >= tabs.length) return;
+			domainName = getDomainName(tabs[index].url)
+			while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
+				index++
+			}
+			tabsToMove = []
+			for (j = index+1; j < tabs.length; j++) {
+				curDomain = getDomainName(tabs[j].url)
+				if (curDomain == domainName) {
+					tabsToMove.push(tabs[j].id);
+				}
+			}
+			if (tabsToMove.length == 0)
+				groupTabsAt(index+1)
+			else
+				moveTabs(tabsToMove.reverse(), index+1)
+		}
+
+		groupTabsAt(0)
+	})
+}
 
 function gotoSelected() {
 	chrome.tabs.query({currentWindow: true}, function(tabs) { 
