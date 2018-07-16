@@ -9,6 +9,16 @@ function updateCount(){
 	});
 }
 
+function setDefaultOptions() {
+	chrome.storage.local.set({'auto_group_tabs': true}, function() {
+      console.log('auto_group_tabs set to ' + true + ' by default on installation')
+    })
+	chrome.storage.local.set({'auto_remove_duplicates': false}, function() {
+      console.log('auto_remove_duplicates set to ' + false + ' by default on installation')
+    })
+}
+
 chrome.tabs.onRemoved.addListener(updateCount);
 chrome.tabs.onCreated.addListener(updateCount);
 
+chrome.runtime.onInstalled.addListener(setDefaultOptions);
