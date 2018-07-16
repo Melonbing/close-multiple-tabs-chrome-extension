@@ -1,4 +1,5 @@
 function renderTabs() {
+	organizeTabs()
     chrome.tabs.query({currentWindow: true}, displayTabs);
 };
 
@@ -36,6 +37,23 @@ function closeSelected() {
 	}
 };
 
+function getTabsToMove(tabs, index) {
+	if (index >= tabs.length) return;
+	domainName = getDomainName(tabs[index].url)
+	while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
+		index++
+	}
+	targetIndex = index+1
+	tabsToMove = []
+	for (j = targetIndex; j < tabs.length; j++) {
+		curDomain = getDomainName(tabs[j].url)
+		if (curDomain == domainName) {
+			tabsToMove.push(tabs[j].id);
+		}
+	}
+	return {'tabsToMove': tabsToMove, 'targetIndex': targetIndex}
+}
+
 function organizeTabs() {
 	function moveTabs(tabsToMove, targetIndex) {
 		// console.log(tabsToMove + " left to move")
@@ -52,22 +70,12 @@ function organizeTabs() {
 	function groupTabsAt(index) {
 		chrome.tabs.query({currentWindow: true}, function(tabs) {
 			// console.log('groupTabsAt: ' + index)
-			if (index >= tabs.length) return;
-			domainName = getDomainName(tabs[index].url)
-			while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
-				index++
-			}
-			tabsToMove = []
-			for (j = index+1; j < tabs.length; j++) {
-				curDomain = getDomainName(tabs[j].url)
-				if (curDomain == domainName) {
-					tabsToMove.push(tabs[j].id);
-				}
-			}
+			let {tabsToMove, targetIndex} = getTabsToMove(tabs, index)
+
 			if (tabsToMove.length == 0)
-				groupTabsAt(index+1)
+				groupTabsAt(targetIndex)
 			else
-				moveTabs(tabsToMove.reverse(), index+1)
+				moveTabs(tabsToMove.reverse(), targetIndex)
 		})
 	}
 
@@ -151,7 +159,7 @@ function removeDuplicates() {
 function eventDispatcher(e) {
 	if ((e.keyCode || e.which) == 8) { // delete
 		closeSelected()
-	} else if ((e.keyCode || e.which) == 68) {// d
+	} else if ((e.keyCode || e.which) == 16) { // shift
 		removeDuplicates()
 	} else if ((e.keyCode || e.which) == 13) { // enter
 		gotoSelected()
@@ -175,3 +183,7 @@ function displayTabs(tabs) {
 };
 
 window.onload = renderTabs
+
+if (typeof module !== 'undefined' && module.exports != null) {
+    exports.getTabsToMove = getTabsToMove;
+}
