@@ -1,5 +1,14 @@
-function renderTabs() {
-	organizeTabs()
+function run() {
+	chrome.storage.local.get('auto_remove_duplicates', function(properties) {
+		if (properties['auto_remove_duplicates']) {
+			removeDuplicates()
+		}
+	})
+	chrome.storage.local.get('auto_group_tabs', function(properties) {
+    	if (properties['auto_group_tabs']) {
+    		organizeTabs()
+    	}
+	})
     chrome.tabs.query({currentWindow: true}, displayTabs);
 };
 
@@ -182,7 +191,7 @@ function displayTabs(tabs) {
     document.onkeyup = eventDispatcher;
 };
 
-window.onload = renderTabs
+window.onload = run
 
 if (typeof module !== 'undefined' && module.exports != null) {
     exports.getTabsToMove = getTabsToMove;
