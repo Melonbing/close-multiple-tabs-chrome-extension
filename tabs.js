@@ -61,7 +61,7 @@ function getTabsToMove(tabs, index) {
 		}
 	}
 	return {'tabsToMove': tabsToMove, 'targetIndex': targetIndex}
-}
+};
 
 function organizeTabs() {
 	function moveTabs(tabsToMove, targetIndex) {
@@ -89,7 +89,7 @@ function organizeTabs() {
 	}
 
 	groupTabsAt(0)
-}
+};
 
 function gotoSelected() {
 	chrome.tabs.query({currentWindow: true}, function(tabs) { 
@@ -118,7 +118,7 @@ function stringComparator(s1, s2) {
 	else if (s1 == s2)
 		return 0
 	return 1
-}
+};
 
 function getDomainName(url) {
 	hostname = (new URL(url)).hostname;
@@ -126,37 +126,47 @@ function getDomainName(url) {
 		hostname = hostname.slice('www.'.length)
 	}
 	return hostname
-}
+};
 
 domainComparator = function(tab1, tab2) {
 	var dn1 = getDomainName(tab1.url)
 	var dn2 = getDomainName(tab2.url)
 	return stringComparator(dn1, dn2)
-}
+};
+
+function getDuplicates(tabs) {
+	tabs.sort(domainComparator)
+	var toCloseIds = [];
+	var toCloseElems = [];
+	var options = document.getElementsByTagName("option");
+	urls = new Set()
+	titles = new Set()
+    
+    prevUrl = null
+    prevDomain = null
+    prevTitle = null
+
+    for (var i = 0; i < tabs.length; i++) {
+    	var curDomain = getDomainName(tabs[i].url)
+    	if (curDomain != prevDomain) {
+    		prevDomain = curDomain
+    		urls.clear()
+    		titles.clear()
+    	} else if (urls.has(tabs[i].url) || titles.has(tabs[i].title)) {
+    		toCloseIds.push(tabs[i].id)
+    		toCloseElems.push(options[i])
+    	}
+    	urls.add(tabs[i].url)
+    	titles.add(tabs[i].title)
+    }
+    return {'toCloseIds': toCloseIds, 'toCloseElems': toCloseElems}
+};
 
 // same url or same domain plus title
 function removeDuplicates() {
 	console.log("enter function removeDuplicates")
 	chrome.tabs.query({currentWindow: true}, function(tabs) { 
-		tabs.sort(domainComparator)
-		var toCloseIds = [];
-		var toCloseElems = [];
-		var options = document.getElementsByTagName("option");
-
-	    prevUrl = null
-	    prevDomain = null
-	    prevTitle = null
-	    for (var i = 0; i < tabs.length; i++) {
-	    	var curDomain = getDomainName(tabs[i].url)
-	    	if (tabs[i].url == prevUrl || (curDomain == prevDomain && tabs[i].title == prevTitle)) {
-	    		toCloseIds.push(tabs[i].id)
-	    		toCloseElems.push(options[i])
-	    	} else {
-	    		prevUrl = tabs[i].url
-	    		prevDomain = curDomain
-	    		prevTitle = tabs[i].title
-	    	}
-	    }
+		let {toCloseIds, toCloseElems} = getDuplicates(tabs)
 	    chrome.tabs.remove(toCloseIds);
 		for (i = 0; i < toCloseElems.length; i++)
 		{
@@ -195,4 +205,5 @@ window.onload = run
 
 if (typeof module !== 'undefined' && module.exports != null) {
     exports.getTabsToMove = getTabsToMove;
+    exports.getDuplicates = getDuplicates;
 }
