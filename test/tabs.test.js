@@ -4,12 +4,12 @@ var MockBrowser = require('mock-browser').mocks.MockBrowser;
 var mock = new MockBrowser();
 global.document = mock.getDocument();
 global.window = {'onload': null} // hack, change later
-var tabsModule = require('../tabs');
+var tabUtils = require('../tab-utils');
 
 describe('Test organizeTabs', function () {
 	it('should move tabs at index 2 to index 1', function() {
 		tabs = [{id: 0, url: 'https://google.com'}, {id: 1, url: 'https://facebook.com'}, {id: 2, url: 'https://google.com'}]
-		assert.deepEqual(tabsModule.getTabsToMove(tabs, 0), {'tabsToMove': [2], 'targetIndex': 1})
+		assert.deepEqual(tabUtils.getTabsToMove(tabs, 0), {'tabsToMove': [2], 'targetIndex': 1})
 	})
 });
 
@@ -24,7 +24,7 @@ describe('Test removeDuplicates', function () {
 		options[1].text = 'google.com *** Google'
 		options[2].text = 'facebook.com *** Facebook'
 		getElemsByTagTame.withArgs('option').returns(options);
-		assert.deepEqual(tabsModule.getDuplicates(tabs), {'toCloseIds': [2], 'toCloseElems': [options[2]]})
+		assert.deepEqual(tabUtils.getDuplicates(tabs), {'toCloseIds': [2], 'toCloseElems': [options[2]]})
 	})
 
 	it('should remove duplicates in same domain not in order', function() {
@@ -37,7 +37,7 @@ describe('Test removeDuplicates', function () {
 		options[1].text = 'google.com *** Google'
 		options[2].text = 'facebook.com *** Facebook'
 		getElemsByTagTame.withArgs('option').returns(options);
-		assert.deepEqual(tabsModule.getDuplicates(tabs), {'toCloseIds': [3], 'toCloseElems': [options[3]]})
+		assert.deepEqual(tabUtils.getDuplicates(tabs), {'toCloseIds': [3], 'toCloseElems': [options[3]]})
 	})
 });
 

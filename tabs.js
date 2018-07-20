@@ -12,182 +12,17 @@ function run() {
     chrome.tabs.query({currentWindow: true}, displayTabs);
 };
 
-function closeSelected() {
-	var toCloseIds = [];
-	var toCloseElems = [];
-	var options = document.getElementsByTagName("option");
-	
-	var highestIndex = -1;
-	var len = tabs.length;
-	for (var i = 0; i < len; i++)
-	{
-	    if (options[i].selected)
-	    {
-			toCloseIds.push(parseInt(options[i].value));
-			toCloseElems.push(options[i]);
-			highestIndex = i;
-	    }
-	}
-	chrome.tabs.remove(toCloseIds);
-	for (i = 0; i < toCloseElems.length; i++)
-	{
-	    toCloseElems[i].remove();
-	}
-
-	// select the next tab after the closed ones
-	if (highestIndex >= 0) {
-		var nextFocusIndex = -1;
-		if (highestIndex == len-1) {
-			nextFocusIndex = len-1-toCloseIds.length
-		} else {
-			nextFocusIndex = highestIndex+1-toCloseIds.length
-		}
-		options[nextFocusIndex].selected = true;
-	}
-};
-
-function getTabsToMove(tabs, index) {
-	if (index >= tabs.length) return;
-	domainName = getDomainName(tabs[index].url)
-	while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
-		index++
-	}
-	targetIndex = index+1
-	tabsToMove = []
-	for (j = targetIndex; j < tabs.length; j++) {
-		curDomain = getDomainName(tabs[j].url)
-		if (curDomain == domainName) {
-			tabsToMove.push(tabs[j].id);
-		}
-	}
-	return {'tabsToMove': tabsToMove, 'targetIndex': targetIndex}
-};
-
-function organizeTabs() {
-	function moveTabs(tabsToMove, targetIndex) {
-		// console.log(tabsToMove + " left to move")
-		if (tabsToMove.length == 0) {
-			groupTabsAt(targetIndex)
-		} else {
-			chrome.tabs.move(tabsToMove.pop(), {'index': targetIndex}, function(movedTab) {
-				// console.log("moved tab " + movedTab.url + " " + movedTab.id + " to index " + targetIndex)
-				moveTabs(tabsToMove, targetIndex+1)
-			})
-		}
-	}
-
-	function groupTabsAt(index) {
-		chrome.tabs.query({currentWindow: true}, function(tabs) {
-			// console.log('groupTabsAt: ' + index)
-			let {tabsToMove, targetIndex} = getTabsToMove(tabs, index)
-
-			if (tabsToMove.length == 0)
-				groupTabsAt(targetIndex)
-			else
-				moveTabs(tabsToMove.reverse(), targetIndex)
-		})
-	}
-
-	groupTabsAt(0)
-};
-
-function gotoSelected() {
-	chrome.tabs.query({currentWindow: true}, function(tabs) { 
-		tabs.sort(tabComparator)
-		var tabId = null
-		var options = document.getElementsByTagName("option");
-		for (var i = 0; i < tabs.length; i++)
-		{
-		    if (options[i].selected)
-		    {
-				tabId = tabs[i].id
-				break
-		    }
-		}
-		if (tabId) {
-	  		chrome.tabs.get(tabId, function(tab) {
-  				chrome.tabs.highlight({'tabs': tab.index}, function() {});
-  			})
-		}
-	})
-}
-
-function getDomainName(url) {
-	hostname = (new URL(url)).hostname;
-	if (hostname.startsWith('www.')) {
-		hostname = hostname.slice('www.'.length)
-	}
-	return hostname
-};
-
-tabComparator = function(tab1, tab2) {
-	function stringComparator(s1, s2) {
-		s1Lower = s1.toLowerCase()
-		s2Lower = s2.toLowerCase()
-		if (s1Lower < s2Lower)
-			return -1
-		else if (s1Lower == s2Lower)
-			return 0
-		return 1
-	};
-	var dn1 = getDomainName(tab1.url)
-	var dn2 = getDomainName(tab2.url)
-	sc = stringComparator(dn1, dn2)
-	return sc == 0 ? stringComparator(tab1.title, tab2.title) : sc
-};
-
-function getDuplicates(tabs) {
-	tabs.sort(tabComparator)
-	var toCloseIds = [];
-	var toCloseElems = [];
-	var options = document.getElementsByTagName("option");
-	urls = new Set()
-	titles = new Set()
-    
-    prevUrl = null
-    prevDomain = null
-    prevTitle = null
-
-    for (var i = 0; i < tabs.length; i++) {
-    	var curDomain = getDomainName(tabs[i].url)
-    	if (curDomain != prevDomain) {
-    		prevDomain = curDomain
-    		urls.clear()
-    		titles.clear()
-    	} else if (urls.has(tabs[i].url) || titles.has(tabs[i].title)) {
-    		toCloseIds.push(tabs[i].id)
-    		toCloseElems.push(options[i])
-    	}
-    	urls.add(tabs[i].url)
-    	titles.add(tabs[i].title)
-    }
-    return {'toCloseIds': toCloseIds, 'toCloseElems': toCloseElems}
-};
-
-// same url or same domain plus title
-function removeDuplicates() {
-	console.log("enter function removeDuplicates")
-	chrome.tabs.query({currentWindow: true}, function(tabs) { 
-		let {toCloseIds, toCloseElems} = getDuplicates(tabs)
-	    chrome.tabs.remove(toCloseIds);
-		for (i = 0; i < toCloseElems.length; i++)
-		{
-		    toCloseElems[i].remove();
-		}
-	} );
-}
-
 function eventDispatcher(e) {
 	if ((e.keyCode || e.which) == 8) { // delete
 		closeSelected()
-	} else if ((e.keyCode || e.which) == 16) { // shift
+	} else if ((e.keyCode || e.which) == 220) { // \ (backslash)
 		removeDuplicates()
 	} else if ((e.keyCode || e.which) == 13) { // enter
 		gotoSelected()
 	}
 }
 
-var MAX_SELECT_SIZE = 20
+const MAX_SELECT_SIZE = 20
 
 function displayTabs(tabs) {
 	//alert('hello')
@@ -204,10 +39,3 @@ function displayTabs(tabs) {
 };
 
 window.onload = run
-
-// for testing purposes
-if (typeof module !== 'undefined' && module.exports != null) {
-    exports.getTabsToMove = getTabsToMove;
-    exports.getDuplicates = getDuplicates;
-    exports.tabComparator = tabComparator;
-}
