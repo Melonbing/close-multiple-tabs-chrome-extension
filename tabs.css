@@ -6,7 +6,7 @@
 
 .hover .hover_text {
     visibility: hidden;
-    width: 160px;
+    width: 190px;
     background-color: wheat;
     color: black;
     text-align: left;
@@ -15,7 +15,7 @@
 
     /* Position the tooltip */
     position: absolute;
-    left: -90px;
+    left: -123px;
     z-index: 1;
 }
 
