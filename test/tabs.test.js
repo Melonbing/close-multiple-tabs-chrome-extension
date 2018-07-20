@@ -1,5 +1,5 @@
 var assert = require('assert');
-var sinon = require('sinon');
+var sinon = require('sinon')
 var MockBrowser = require('mock-browser').mocks.MockBrowser;
 var mock = new MockBrowser();
 global.document = mock.getDocument();
@@ -16,7 +16,9 @@ describe('Test organizeTabs', function () {
 describe('Test removeDuplicates', function () {
 	getElemsByTagTame = sinon.stub(document, 'getElementsByTagName');
 	it('should remove duplicates which do not appear in order', function() {
-		tabs = [{id: 0, url: 'https://google.com'}, {id: 1, url: 'https://facebook.com'}, {id: 2, url: 'https://google.com'}]
+		tabs = [{id: 0, url: 'https://google.com', title: 'Google'},
+				{id: 1, url: 'https://facebook.com', title: 'Facebook'},
+				{id: 2, url: 'https://google.com', title: 'Google'}]
 		options = [document.createElement("option"), document.createElement("option"), document.createElement("option")]
 		options[0].text = 'facebook.com *** Facebook'
 		options[1].text = 'google.com *** Google'
@@ -36,5 +38,16 @@ describe('Test removeDuplicates', function () {
 		options[2].text = 'facebook.com *** Facebook'
 		getElemsByTagTame.withArgs('option').returns(options);
 		assert.deepEqual(tabsModule.getDuplicates(tabs), {'toCloseIds': [3], 'toCloseElems': [options[3]]})
+	})
+});
+
+describe('Test tabComparator', function () {
+	it('comparator should not be case-sensitive', function() {
+		assert(tabComparator(
+			{id: 1, url: 'https://google.com/search?q=hello', title: 'hello - Google Search'},
+			{id: 2, url: 'https://google.com', title: 'Google'}) > 0)
+		assert(tabComparator(
+			{id: 1, url: 'https://google.com/search?q=Hello', title: 'Hello - Google Search'},
+			{id: 2, url: 'https://google.com/search?q=facebook', title: 'facebook - Google Search'}) > 0)
 	})
 });

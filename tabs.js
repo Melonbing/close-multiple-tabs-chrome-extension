@@ -93,7 +93,7 @@ function organizeTabs() {
 
 function gotoSelected() {
 	chrome.tabs.query({currentWindow: true}, function(tabs) { 
-		tabs.sort(domainComparator)
+		tabs.sort(tabComparator)
 		var tabId = null
 		var options = document.getElementsByTagName("option");
 		for (var i = 0; i < tabs.length; i++)
@@ -112,14 +112,6 @@ function gotoSelected() {
 	})
 }
 
-function stringComparator(s1, s2) {
-	if (s1 < s2)
-		return -1
-	else if (s1 == s2)
-		return 0
-	return 1
-};
-
 function getDomainName(url) {
 	hostname = (new URL(url)).hostname;
 	if (hostname.startsWith('www.')) {
@@ -128,14 +120,24 @@ function getDomainName(url) {
 	return hostname
 };
 
-domainComparator = function(tab1, tab2) {
+tabComparator = function(tab1, tab2) {
+	function stringComparator(s1, s2) {
+		s1Lower = s1.toLowerCase()
+		s2Lower = s2.toLowerCase()
+		if (s1Lower < s2Lower)
+			return -1
+		else if (s1Lower == s2Lower)
+			return 0
+		return 1
+	};
 	var dn1 = getDomainName(tab1.url)
 	var dn2 = getDomainName(tab2.url)
-	return stringComparator(dn1, dn2)
+	sc = stringComparator(dn1, dn2)
+	return sc == 0 ? stringComparator(tab1.title, tab2.title) : sc
 };
 
 function getDuplicates(tabs) {
-	tabs.sort(domainComparator)
+	tabs.sort(tabComparator)
 	var toCloseIds = [];
 	var toCloseElems = [];
 	var options = document.getElementsByTagName("option");
@@ -189,7 +191,7 @@ var MAX_SELECT_SIZE = 20
 
 function displayTabs(tabs) {
 	//alert('hello')
-    tabs.sort(domainComparator)
+    tabs.sort(tabComparator)
 
     var tabDescription = getDomainName(tabs[0].url) + ' *** ' + tabs[0].title
     $('#tabs').append('<option value=\"' + tabs[0].id + '\" selected>' + tabDescription + '</option>')
@@ -203,7 +205,9 @@ function displayTabs(tabs) {
 
 window.onload = run
 
+// for testing purposes
 if (typeof module !== 'undefined' && module.exports != null) {
     exports.getTabsToMove = getTabsToMove;
     exports.getDuplicates = getDuplicates;
+    exports.tabComparator = tabComparator;
 }
