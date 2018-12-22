@@ -25,10 +25,9 @@ function eventDispatcher(e) {
 const MAX_SELECT_SIZE = 20
 
 function displayTabs(tabs) {
-	//alert('hello')
     tabs.sort(tabComparator)
 
-    var tabDescription = getDomainName(tabs[0].url) + ' *** ' + tabs[0].title
+    var tabDescription = getDomainName(tabs[0].url) +' *** ' + tabs[0].title
     $('#tabs').append('<option value=\"' + tabs[0].id + '\" selected>' + tabDescription + '</option>')
     for (var i = 1; i < tabs.length; i++) {
     	var tabDescription = getDomainName(tabs[i].url) + ' *** ' + tabs[i].title
@@ -36,6 +35,9 @@ function displayTabs(tabs) {
     }
     $('#tabs').attr('size', Math.min(tabs.length, MAX_SELECT_SIZE))
     document.onkeyup = eventDispatcher;
+    $('#tabs option').dblclick(function () {
+		gotoTabId(parseInt(this.value));
+    })
 };
 
 window.onload = run
