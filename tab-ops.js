@@ -60,6 +60,12 @@ function organizeTabs() {
 	groupTabsAt(0)
 };
 
+function gotoTabId(tabId) {
+	chrome.tabs.get(tabId, function(tab) {
+		chrome.tabs.highlight({'tabs': tab.index}, function() {});
+	})
+}
+
 function gotoSelected() {
 	chrome.tabs.query({currentWindow: true}, function(tabs) { 
 		tabs.sort(tabComparator)
@@ -74,9 +80,7 @@ function gotoSelected() {
 		    }
 		}
 		if (tabId) {
-	  		chrome.tabs.get(tabId, function(tab) {
-  				chrome.tabs.highlight({'tabs': tab.index}, function() {});
-  			})
+			gotoTabId(tabId)
 		}
 	})
 }
