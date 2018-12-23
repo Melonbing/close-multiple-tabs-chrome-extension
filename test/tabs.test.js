@@ -11,6 +11,11 @@ describe('Test organizeTabs', function () {
 		tabs = [{id: 0, url: 'https://google.com'}, {id: 1, url: 'https://facebook.com'}, {id: 2, url: 'https://google.com'}]
 		assert.deepEqual(tabUtils.getTabsToMove(tabs, 0), {'tabsToMove': [2], 'targetIndex': 1})
 	})
+
+	it('should return (null, null) when index exceeds number of tabs', function() {
+		tabs = [{id: 0, url: 'https://google.com'}, {id: 1, url: 'https://facebook.com'}, {id: 2, url: 'https://google.com'}]
+		assert.deepEqual(tabUtils.getTabsToMove(tabs, 3), {'tabsToMove': null, 'targetIndex': null})
+	})
 });
 
 describe('Test removeDuplicates', function () {

@@ -49,6 +49,8 @@ function organizeTabs() {
 		chrome.tabs.query({currentWindow: true}, function(tabs) {
 			// console.log('groupTabsAt: ' + index)
 			let {tabsToMove, targetIndex} = getTabsToMove(tabs, index)
+			if (tabsToMove == null)
+				return;
 
 			if (tabsToMove.length == 0)
 				groupTabsAt(targetIndex)

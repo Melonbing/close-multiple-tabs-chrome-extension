@@ -9,6 +9,11 @@ function loadOptions() {
   chrome.storage.local.get('auto_remove_duplicates', function(properties) {
     document.getElementById('auto_remove_duplicates').checked = properties['auto_remove_duplicates']
   })
+
+  $("label[for='auto_group_tabs']").text(chrome.i18n.getMessage("auto_group_tabs"))
+  $("label[for='auto_remove_duplicates']").text(chrome.i18n.getMessage("auto_remove_duplicates"))
+  $('#save_options').val(chrome.i18n.getMessage("save_options"))
+  $('body').css("visibility","visible")
 }
 
 function saveOptions() {
@@ -20,5 +25,5 @@ function saveOptions() {
   chrome.storage.local.set({'auto_remove_duplicates': auto_remove_duplicates_flag}, function() {
       console.log('auto_remove_duplicates set to ' + auto_remove_duplicates_flag)
     })
-  alert('Options saved.')
+  alert(chrome.i18n.getMessage("options_saved_alert"))
 }

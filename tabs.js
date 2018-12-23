@@ -9,6 +9,8 @@ function run() {
     		organizeTabs()
     	}
 	})
+	document.title = chrome.i18n.getMessage("title");
+	$('#usage_instructions').html(chrome.i18n.getMessage("usage_instructions"));
     chrome.tabs.query({currentWindow: true}, displayTabs);
 };
 

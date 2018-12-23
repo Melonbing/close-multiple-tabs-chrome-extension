@@ -6,7 +6,7 @@
 
 .hover .hover_text {
     visibility: hidden;
-    width: 190px;
+    width: __MSG_css_hover_text_width__;
     background-color: wheat;
     color: black;
     text-align: left;
@@ -15,7 +15,7 @@
 
     /* Position the tooltip */
     position: absolute;
-    left: -123px;
+    left: __MSG_css_hover_text_left__;
     z-index: 1;
 }
 
@@ -24,6 +24,6 @@
 }
 
 #toggle_options {
-	font-size: 11px;
+	font-size: 12px;
 	float: right;
 }

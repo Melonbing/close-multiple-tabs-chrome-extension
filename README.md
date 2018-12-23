@@ -1,10 +1,10 @@
-Tab organizer Chrome extension 标签页管理Chrome插件
+Tab organizer Chrome extension 标签页管理Chrome扩展程序
 ==================================
 
 Chrome extension for managing an excess of tabs.
-管理多标签的Chrome插件
+管理多标签的Chrome扩展程序
 
-https://chrome.google.com/webstore/detail/close-multiple-tabs/mbmmpilinpiapfcmknmjgikgoeicadka
+https://chrome.google.com/webstore/detail/tab-organizer/mbmmpilinpiapfcmknmjgikgoeicadka?hl=en
 
 ### Run tests 跑测试
 

@@ -51,7 +51,7 @@ function getDuplicates(tabs) {
 };
 
 function getTabsToMove(tabs, index) {
-	if (index >= tabs.length) return;
+	if (index >= tabs.length) return {'tabsToMove': null, 'targetIndex': null};
 	domainName = getDomainName(tabs[index].url)
 	while (index+1 < tabs.length && getDomainName(tabs[index+1].url) == domainName) {
 		index++
